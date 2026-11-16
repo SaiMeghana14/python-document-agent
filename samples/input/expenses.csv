@@ -1,5 +1,6 @@
 employee_id,department,amount
 0012,Engineering,125.50
 0013,Sales,80.00
-0012,Engineering,45.25
-0014,Support,60.00
+0012,Engineering,125.50
+0014,Support,
+0015,,90.00
