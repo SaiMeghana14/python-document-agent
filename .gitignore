@@ -9,3 +9,7 @@ htmlcov/
 data/storage/
 data/catalogue.json
 !data/.gitkeep
+data/expenses_cleaned.csv
+data/exercise_record.json
+
+test_samples/

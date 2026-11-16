@@ -1,29 +1,38 @@
+"""Create local PDF boundary samples for testing the document importer."""
+
 from pathlib import Path
 
 from PIL import Image, ImageDraw
 from reportlab.pdfgen import canvas
 
-output_folder = Path("samples/input")
-output_folder.mkdir(parents=True, exist_ok=True)
 
-# Create a PDF containing selectable text.
-text_pdf = output_folder / "text_sample.pdf"
-pdf = canvas.Canvas(str(text_pdf))
-pdf.drawString(72, 750, "PDF Text Extraction Test")
-pdf.drawString(72, 720, "This text should be extractable.")
-pdf.save()
+def main() -> None:
+    output_folder = Path("samples/input")
+    output_folder.mkdir(parents=True, exist_ok=True)
 
-# Create an image to place inside a PDF.
-image_path = output_folder / "sample_image.png"
-image = Image.new("RGB", (500, 200), "white")
-draw = ImageDraw.Draw(image)
-draw.text((30, 80), "Image-only PDF test", fill="black")
-image.save(image_path)
+    # The same simple text is placed in three PDFs with selectable text.
+    for number in range(1, 4):
+        pdf_path = output_folder / f"text_sample_{number}.pdf"
+        pdf = canvas.Canvas(str(pdf_path))
+        pdf.drawString(72, 750, f"Selectable PDF sample {number}")
+        pdf.drawString(72, 720, "This text can be extracted by a PDF reader.")
+        pdf.save()
 
-# Create a PDF containing only the image.
-image_pdf = output_folder / "image_only_sample.pdf"
-pdf = canvas.Canvas(str(image_pdf))
-pdf.drawImage(str(image_path), 72, 650, width=400, height=160)
-pdf.save()
+    # Create an image and put it into a PDF. The PDF has no text layer.
+    image_path = output_folder / "image_only_sample.png"
+    image = Image.new("RGB", (500, 200), "white")
+    draw = ImageDraw.Draw(image)
+    draw.text((30, 80), "Image-only PDF test", fill="black")
+    image.save(image_path)
 
-print("Created both PDF test files.")
+    pdf_path = output_folder / "image_only_sample.pdf"
+    pdf = canvas.Canvas(str(pdf_path))
+    pdf.drawImage(str(image_path), 72, 650, width=400, height=160)
+    pdf.save()
+
+    print("Created three text PDFs and one image-only PDF in", output_folder)
+    print("The PNG is also available as an unsupported-image test case.")
+
+
+if __name__ == "__main__":
+    main()
