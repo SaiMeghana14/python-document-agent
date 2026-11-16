@@ -1,0 +1,41 @@
+[project]
+name = "document-agent"
+version = "0.1.0"
+description = "A small command-line document library for importing and inspecting local files."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pypdf>=5.0.0",
+    "pandas>=2.2.0",
+    "numpy>=2.0.0",
+]
+
+[project.scripts]
+docagent = "document_agent.cli:main"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.11.0",
+    "pillow>=13.0.0",
+    "pytest>=8.0.0",
+    "reportlab>=5.1.0",
+    "ruff>=0.6.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.7,<0.14.0"]
+build-backend = "uv_build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.mypy]
+python_version = "3.13"
+files = ["src/document_agent"]
+warn_return_any = true
+warn_unused_configs = true
