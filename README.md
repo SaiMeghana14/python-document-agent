@@ -1,29 +1,43 @@
 # Python Document Agent
 
-A beginner-friendly command-line document library built for the Python Foundations and Document Tools assignment.
+A Python command-line application for importing, storing, listing and inspecting documents. This project was developed as part of the **Python Foundations and Document Tools internship assignment**.
 
-## Features
+The project also contains Python practice exercises covering programming fundamentals, file handling, data processing, logging, testing and debugging.
 
-- Import TXT, Markdown, CSV and PDFs that contain extractable text.
-- Copy accepted files into managed storage without changing the originals.
-- Save document details in a JSON catalogue so they remain available after restarting.
-- Detect duplicate content using SHA-256. Different files with the same name are kept when their contents differ.
-- List documents and inspect their metadata and content preview.
-- Report unsupported images and PDFs with no extractable text without stopping the import batch.
+## 1. Features
 
-## Project structure
+The application supports:
+
+- Importing `.txt`, `.md`, `.csv` and text-based `.pdf` files.
+- Copying accepted documents into managed storage without changing the original files.
+- Saving document information in a JSON catalogue.
+- Generating a SHA-256 hash for each document to identify duplicate content.
+- Skipping documents whose content has already been imported.
+- Keeping files with the same name but different content as separate documents.
+- Listing imported documents.
+- Inspecting a document and viewing a content preview.
+- Reporting unsupported image files.
+- Detecting PDFs without extractable text and explaining that OCR may be required.
+- Checking input paths to help prevent files outside the selected folder from being imported.
+
+**Important:** Image OCR is not implemented. PNG, JPG and JPEG files are unsupported. A PDF must contain extractable text to be imported.
+
+## 2. Project structure
 
 ```text
 python-document-agent/
+│
 ├── data/
 │   └── .gitkeep
+│
 ├── docs/
 │   └── assignment-notes.md
+│
 ├── exercises/
-│   ├── README.md
 │   ├── calculator.py
 │   ├── create_pdf_samples.py
 │   ├── data_tools.py
+│   ├── debugger_practice.py
 │   ├── file_tools.py
 │   ├── import_example.py
 │   ├── imports_and_context.py
@@ -31,80 +45,185 @@ python-document-agent/
 │   ├── logging_demo.py
 │   ├── lookup_benchmark.py
 │   ├── python_fundamentals.py
-│   └── storage_example.py
-├── samples/input/
-├── src/document_agent/
+│   ├── storage_example.py
+│   └── README.md
+│
+├── samples/
+│   ├── input/
+│   └── manifest.csv
+│
+├── src/
+│   └── document_agent/
+│       ├── __init__.py
+│       ├── __main__.py
+│       ├── catalogue.py
+│       ├── cli.py
+│       ├── importer.py
+│       ├── models.py
+│       └── readers.py
+│
 ├── tests/
+│   ├── conftest.py
+│   ├── test_catalogue.py
+│   ├── test_importer.py
+│   ├── test_logging.py
+│   └── test_readers.py
+│
 ├── .gitignore
 ├── .python-version
-├── README.md
 ├── pyproject.toml
-└── uv.lock
+├── uv.lock
+└── README.md
 ```
 
-## Setup (Windows PowerShell)
+The application creates its runtime files under `data/`, including the JSON catalogue and managed document storage. These generated files are local application data and are not intended to be committed to Git.
 
-Install Python 3.13 and uv. Open the project folder in VS Code and run:
+## 3. Technologies used
+
+| Technology | Purpose |
+|---|---|
+| Python 3.13 | Main programming language |
+| uv | Project and dependency management |
+| pypdf | Reading text from PDF files |
+| pandas | CSV cleaning and data analysis |
+| NumPy | Array operations and broadcasting |
+| pytest | Automated testing |
+| Ruff | Code style and lint checks |
+| mypy | Static type checking |
+| hashlib | SHA-256 content hashing |
+| pathlib | File and directory handling |
+| argparse | Command-line argument handling |
+| logging | Application log messages |
+
+## 4. Setup on Windows
+
+Install Python 3.13 and uv.
+
+Open PowerShell in the project folder:
 
 ```powershell
-uv sync --locked
+cd D:\python-document-agent
 ```
 
-## Run the document application
+Install the project dependencies:
+
+```powershell
+uv sync
+```
+
+This creates or updates the project's virtual environment and installs the dependencies specified in `pyproject.toml` and `uv.lock`.
+
+## 5. Running the application
+
+Run these commands from the project root.
+
+### Display available commands
+
+```powershell
+uv run docagent --help
+```
+
+The application provides three main commands: `import`, `list` and `inspect`.
+
+### Import documents
 
 ```powershell
 uv run docagent import samples/input
+```
+
+This reads supported files from the input folder, checks their contents and imports accepted documents into managed storage.
+
+### List imported documents
+
+```powershell
 uv run docagent list
+```
+
+This displays the documents saved in the catalogue, including their IDs and other available details.
+
+### Inspect a document
+
+Copy a document ID from the list command and use it here:
+
+```powershell
 uv run docagent inspect YOUR_DOCUMENT_ID
 ```
 
-Copy a real ID from the `list` output before running `inspect`.
+Replace `YOUR_DOCUMENT_ID` with an actual document ID.
 
-The catalogue and accepted copies are created locally in `data/catalogue.json` and `data/storage/`. They are intentionally excluded from Git.
+The inspect command displays document details and a preview of its extracted content.
 
-## Run the exercises
-
-See [exercises/README.md](exercises/README.md) for the topic-to-file guide. For example:
+### Display module help
 
 ```powershell
-uv run python exercises/python_fundamentals.py
-uv run python exercises/imports_and_context.py
-uv run python exercises/data_tools.py
+uv run python -m document_agent --help
 ```
 
-The data exercise reads the existing `samples/input/expenses.csv` and writes a cleaned copy to `data/expenses_cleaned.csv`. It does not edit the source CSV.
+## 6. Running the tests and code checks
 
-Optional PDF boundary samples can be created with:
-
-```powershell
-uv run python exercises/create_pdf_samples.py
-```
-
-This creates additional files in `samples/input/`. Only run it if you want to generate the test samples; it does not alter the three original sample documents.
-
-## Checks
+Run the automated tests:
 
 ```powershell
 uv run python -m pytest -v
+```
+
+Check code quality using Ruff:
+
+```powershell
 uv run python -m ruff check .
+```
+
+Check type annotations using mypy:
+
+```powershell
 uv run python -m mypy src
 ```
 
-Record the actual output from your machine in `docs/assignment-notes.md`. Do not claim checks passed until you have run them.
+### Verified results
 
-## Design notes
+The final checks completed successfully:
 
-- `readers.py` contains format-specific reading code.
-- `importer.py` coordinates validation, duplicate detection and copying.
-- `models.py` defines the document record.
-- `catalogue.py` reads and writes JSON metadata.
-- `storage.py` calculates hashes and copies accepted files.
-- `cli.py` handles command-line arguments and displays results.
+- **pytest:** 21 passed, 2 skipped.
+- **Ruff:** All checks passed.
+- **mypy:** No issues found in 8 source files.
 
-The JSON catalogue is kept separate from readers and command handling. In a later version, the persistence functions in `catalogue.py` could be replaced with database operations without rewriting the file readers.
+The two skipped tests were related to symbolic-link testing in the Windows environment.
 
-## Current limits
+## 7. Python exercises
 
-- OCR is not implemented. Image files are unsupported, and a PDF with no extractable text is skipped with an OCR-needed message.
-- The tool reads CSV data but does not automatically clean or modify imported source files.
-- The sample files are small learning examples, not real company documents.
+The `exercises/` folder contains separate practice programs for the Python concepts covered in the assignment.
+
+For the exercise list and commands, see [`exercises/README.md`](exercises/README.md).
+
+Run an exercise from the project root, for example:
+
+```powershell
+uv run python exercises/python_fundamentals.py
+```
+
+## 8. Sample documents
+
+The `samples/input/` folder contains documents used to test the application.
+
+The samples include:
+
+- Text and Markdown files.
+- A CSV file containing duplicate data and missing values.
+- Selectable-text PDF files.
+- An image-only PDF.
+- A PNG image used to test unsupported file handling.
+
+The `samples/manifest.csv` file records each sample's filename, source, acquisition date and SHA-256 hash.
+
+## 9. Known limitations
+
+- OCR is not implemented.
+- Image files such as PNG, JPG and JPEG are unsupported.
+- PDFs without extractable text cannot be imported.
+- The application is designed as a local command-line document library; it is not a web application.
+
+## 10. Assignment documentation
+
+The assignment work log is maintained in [`docs/assignment-notes.md`](docs/assignment-notes.md).
+
+It records the development environment, application design, testing results, exercise observations, debugging experience and lessons learned.
